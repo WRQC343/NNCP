@@ -26,7 +26,6 @@ glance, without a computer.
 
 | Item | Where to get it | Notes |
 |---|---|---|
-| Raspberry Pi running **HamVOIP** | [hamvoip.org](https://hamvoip.org) | Your existing node works |
 | **5" Nextion screen** NX8048P050-011C-Y | [Amazon](https://www.amazon.com/dp/B0B9GZHVT6) | Intelligent, capacitive touch, with enclosure. Comes with the cable that plugs onto the Pi's pins |
 | *or* **7" Nextion screen** NX8048P070-011C-Y | [Amazon](https://www.amazon.com/dp/B0B9GZG4H8) | Same panel, about 1.4x bigger |
 | *or* **4.3" Nextion screen** NX4827P043-011C-Y | [Amazon](https://www.amazon.com/dp/B0B9GWB374) | Smaller 480 x 272 version of the same panel |
