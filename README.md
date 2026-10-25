@@ -8,7 +8,6 @@ A 4.3", 5" or 7" Nextion touchscreen control panel for HamVOIP nodes on a Raspbe
 Connect and disconnect nodes, send DTMF, watch who's linked, and check your node at a
 glance, without a computer.
 
-**By [gmrs-link.com](https://gmrs-link.com)**
 
 ![The panel's screens](docs/preview.png)
 
