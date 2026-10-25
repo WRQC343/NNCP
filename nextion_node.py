@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# By -- WRQC343 -- www.gmrs-link.com
+#
 """
-nextion_node.py - Nextion touchscreen control panel for HamVOIP / AllStar nodes.
-
-Pages: main (quick connects, links, who's talking, weather), node keypad,
-DTMF pad, system (temp, uptime, IP, restart/reboot/shutdown), weather.
-
-The Pi does all the drawing: the Nextion only needs five background pictures
-and three fonts loaded (see INSTALL_GUIDE.html). Touches come back as raw X/Y
-coordinates (sendxy=1), so there are no buttons to wire up in Nextion Editor.
+nextion_node.py - Nextion touchscreen control panel for HamVOIP nodes.
 
 Works with Python 2.7 or 3.x, standard library only.
 
