@@ -1,5 +1,5 @@
 [Unit]
-Description=Nextion touchscreen control panel for AllStar node
+Description=Nextion touchscreen control panel
 After=asterisk.service
 Wants=asterisk.service
 
