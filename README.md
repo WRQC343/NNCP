@@ -2,7 +2,7 @@
 ![Release Version](https://img.shields.io/badge/Version-v2.9.0-blue?color=blue)
 ![OS Version](https://img.shields.io/badge/OS-Linux_*_Hamvoip-red?color=red)
 
-# GMRS-Link Nextion Node Control Panel
+# GMRS-Link - Nextion Node Control Panel
 
 A 5" Nextion touchscreen control panel for HamVOIP nodes on a Raspberry Pi.
 Connect and disconnect nodes, send DTMF, watch who's linked, and check your node at a
