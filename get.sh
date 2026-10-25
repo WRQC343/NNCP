@@ -2,13 +2,13 @@
 #
 # get.sh - one-line installer / updater for the GMRS-Link Nextion Node Control Panel
 #
-#   curl -sSL https://raw.githubusercontent.com/__GITHUB_REPO__/main/get.sh | bash
+#   curl -sSL https://raw.githubusercontent.com/WRQC343/NNCP/main/get.sh | bash
 #
 # Downloads the latest version from GitHub into /root/nextion-hamvoip, then runs
 # the installer on a new node or the updater on a node that already has the panel.
 # gmrs-link.com
 
-REPO="${NEXTION_REPO:-__GITHUB_REPO__}"
+REPO="${NEXTION_REPO:-WRQC343/NNCP}"
 BRANCH="${NEXTION_BRANCH:-main}"
 URL="${NEXTION_URL:-https://github.com/$REPO/archive/refs/heads/$BRANCH.tar.gz}"
 DEST="${NEXTION_DEST:-/root/nextion-hamvoip}"

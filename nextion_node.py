@@ -42,12 +42,13 @@ else:  # pragma: no cover
     from urllib2 import urlopen
     from urllib import quote as urlquote
 
-VERSION = "2.9"
+VERSION = "3.0"
 CONFIG_PATH = "/etc/nextion-node.json"
 
 DEFAULT_CONFIG = {
     "node": "1999",
     "title": "",
+    "screen": "800x480",               # 800x480 = 5" and 7" screens, 480x272 = 4.3" screen
     "serial_port": "/dev/ttyAMA0",
     "baud": 9600,
     "asterisk": "/usr/sbin/asterisk",
@@ -95,7 +96,20 @@ DEFAULT_CONFIG = {
 # Screen layout (800 x 480). make_images.py imports these so the pictures
 # and the touch areas always line up.
 # --------------------------------------------------------------------------
-SCREEN_W, SCREEN_H = 800, 480       # 5" Nextion: NX8048T050 / NX8048K050 / NX8048P050
+# The layout is designed at 800 x 480 (5" and 7" screens). use_screen("480x272")
+# rescales every position below for the 4.3" screen.
+SCREEN_W, SCREEN_H = 800, 480
+SX = SY = 1.0                       # scale from the 800 x 480 design to this screen
+
+
+def sx(v):
+    return int(round(v * SX))
+
+
+def sy(v):
+    return int(round(v * SY))
+
+
 PIC_MAIN, PIC_KEYPAD, PIC_DTMF, PIC_SYSTEM, PIC_WEATHER, PIC_EXTRAS = 0, 1, 2, 3, 4, 5
 PIC_BOOT = 6          # shown by the screen itself at power-on (page0 pic=6 in Nextion Editor)
 FONT_SMALL, FONT_BIG, FONT_HUGE = 0, 1, 2      # 24px, 32px, 64px in Nextion Editor
@@ -141,7 +155,7 @@ TX_LIGHT = (708, 80, 74, 68)
 
 def light_inner(box):
     x, y, w, h = box
-    return (x + 6, y + 6, w - 12, h - 12)
+    return (x + sx(6), y + sy(6), w - sx(12), h - sy(12))
 
 
 # rough width of the 24px font, used to decide when the links line must scroll
@@ -149,8 +163,9 @@ _CHAR_W = {" ": 7, "(": 8, ")": 8, ".": 7, "|": 7, "+": 14, u"\u00b0": 9}
 
 
 def text_px(text):
+    k = SMALL_PX / 24.0
     return sum(_CHAR_W.get(c, 13 if c.isdigit() else 16 if c.isupper() else 12)
-               for c in text)
+               for c in text) * k
 
 ENTRY_BOX = (12, 10, 776, 72)
 ENTRY_TEXT = (32, 22, 740, 48)
@@ -185,7 +200,7 @@ SYSTEM_ROW_H = 79
 
 def system_value_box(i):
     x, y, w, h = SYSTEM_PANEL
-    return (x + 20, y + i * SYSTEM_ROW_H + 34, w - 40, 40)
+    return (x + sx(20), y + i * SYSTEM_ROW_H + sy(34), w - sx(40), sy(40))
 
 
 SYSTEM_BUTTONS = [
@@ -208,8 +223,9 @@ WX_TEXT = {
 
 
 def wx_day_boxes(i):
-    y = 112 + i * 96
-    return (420, y, 170, 40), (590, y, 186, 40), (420, y + 44, 356, 34)
+    y = sy(112 + i * 96)
+    return ((sx(420), y, sx(170), sy(40)), (sx(590), y, sx(186), sy(40)),
+            (sx(420), y + sy(44), sx(356), sy(34)))
 
 
 WEATHER_BUTTONS = [("refresh", 412, 410, 184, 60), ("back", 604, 410, 184, 60)]
@@ -234,7 +250,7 @@ EXTRAS_STATE_KEYS = ["reconn", "gps"]     # same order as EXTRAS_GROUPS
 
 def extras_state_box(i):
     _, (gx, gy, gw, gh), _ = EXTRAS_GROUPS[i]
-    return (gx + 220, gy + 6, 300, 34)
+    return (gx + sx(220), gy + sy(6), sx(300), sy(34))
 EXTRAS_STATUS_TEXT = (28, 408, 532, 40)
 
 
@@ -247,14 +263,14 @@ def find_button(name, buttons):
 
 def extras_code_box(btn):
     _, x, y, w, h = btn
-    return (x + 4, y + h - 32, w - 8, 26)
+    return (x + sx(4), y + h - sy(32), w - sx(8), sy(26))
 
 
 # Text boxes inside buttons, scaled to the button size (used by make_images.py too)
 def fav_boxes(x, y, w, h):
-    label = (x + 6, y + int(h * 0.12), w - 12, int(h * 0.44))
-    node = (x + 6, y + int(h * 0.56), w - 12, int(h * 0.30))
-    bar = (x + 16, y + h - 10, w - 32, 5)
+    label = (x + sx(6), y + int(h * 0.12), w - sx(12), int(h * 0.44))
+    node = (x + sx(6), y + int(h * 0.56), w - sx(12), int(h * 0.30))
+    bar = (x + sx(16), y + h - sy(10), w - sx(32), max(3, sy(5)))
     return label, node, bar
 
 
@@ -269,6 +285,50 @@ mode_boxes = two_line_boxes
 
 def center_box(x, y, w, h, text_h):
     return (x, y + (h - text_h) // 2, w, text_h)
+
+
+# ---- 4.3" support: rescale the whole layout --------------------------------------
+_RECTS = ["BOOT_STATUS_PANEL", "BOOT_STATUS", "BOOT_NODE", "BOOT_CREDIT", "BOOT_VERSION",
+          "STATUS_BOX", "RX_LIGHT", "TX_LIGHT", "ENTRY_BOX", "ENTRY_TEXT", "SYSTEM_PANEL",
+          "WX_NOW_PANEL", "WX_FC_PANEL", "EXTRAS_STATUS", "EXTRAS_STATUS_TEXT"]
+_RECT_DICTS = ["HEADER_TEXT", "MAIN_TEXT", "WX_TEXT"]
+_BUTTON_LISTS = ["MAIN_BUTTONS", "KEYPAD_BUTTONS", "DTMF_BUTTONS", "SYSTEM_BUTTONS",
+                 "WEATHER_BUTTONS", "EXTRAS_BUTTONS"]
+SCREENS = {
+    # name: (width, height, small font px, big font px, huge font px)
+    "800x480": (800, 480, 24, 32, 64),
+    "480x272": (480, 272, 16, 20, 36),
+}
+
+
+def _scale_rect(r):
+    x, y, w, h = r
+    x2, y2 = sx(x), sy(y)
+    return (x2, y2, sx(x + w) - x2, sy(y + h) - y2)
+
+
+def use_screen(name):
+    """Switch the layout to another screen size. Call once, before drawing."""
+    global SCREEN_W, SCREEN_H, SX, SY, SMALL_PX, BIG_PX, HUGE_PX, HEADER_H
+    global STATUS_DIVIDER_X, SYSTEM_ROW_H, BADGES, EXTRAS_GROUPS
+    if name not in SCREENS:
+        name = "800x480"
+    w, h, small, big, huge = SCREENS[name]
+    if (w, h) == (SCREEN_W, SCREEN_H):
+        return
+    SX, SY = w / float(SCREEN_W), h / float(SCREEN_H)
+    g = globals()
+    for n in _RECTS:
+        g[n] = _scale_rect(g[n])
+    for n in _RECT_DICTS:
+        g[n] = dict((k, _scale_rect(v)) for k, v in g[n].items())
+    for n in _BUTTON_LISTS:
+        g[n] = [(b[0],) + _scale_rect(b[1:]) for b in g[n]]
+    BADGES = [(k, t, _scale_rect(r)) for k, t, r in BADGES]
+    EXTRAS_GROUPS = [(t, _scale_rect(r), items) for t, r, items in EXTRAS_GROUPS]
+    HEADER_H, STATUS_DIVIDER_X, SYSTEM_ROW_H = sy(HEADER_H), sx(STATUS_DIVIDER_X), sy(SYSTEM_ROW_H)
+    SCREEN_W, SCREEN_H = w, h
+    SMALL_PX, BIG_PX, HUGE_PX = small, big, huge
 
 
 MAX_NODE_DIGITS = 7
@@ -720,6 +780,9 @@ class Panel(object):
     def text(self, box, txt, font, color, pic, align=1):
         """align: 0 left, 1 center, 2 right."""
         x, y, w, h = box
+        need = {FONT_SMALL: SMALL_PX, FONT_BIG: BIG_PX, FONT_HUGE: HUGE_PX}.get(font, 0) + 2
+        if h < need:                     # never shorter than the font, or it won't draw
+            y, h = max(0, y - (need - h) // 2), need
         # sta=0 -> background cropped from picture `pic`, so old text is wiped cleanly
         self.send(u"xstr %d,%d,%d,%d,%d,%d,%d,%d,1,0,%s" % (
             x, y, w, h, font, color, pic, align, self.quote(txt)))
@@ -1611,6 +1674,7 @@ def main():
         print("%s|%s|%s" % res if res else "NOTFOUND")
         return
     cfg = load_config(cfg_path)
+    use_screen(cfg.get("screen", "800x480"))
     if "--port" in args:
         cfg["serial_port"] = args[args.index("--port") + 1]
     test_mode = "--test" in args

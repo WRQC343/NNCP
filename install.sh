@@ -113,10 +113,16 @@ else
     ask "Header text, e.g. your call sign (Enter for \"NODE $NODE\")" ""
     TITLE="$(label "$REPLY")"
 
+    say "Screen size"
+    echo "      1) 5\" or 7\" screen   (800 x 480 - NX8048...)"
+    echo "      2) 4.3\" screen       (480 x 272 - NX4827...)"
+    ask "Which screen? 1 or 2" "1"
+    if [ "$REPLY" = "2" ]; then SCREEN="480x272"; else SCREEN="800x480"; fi
+
     say "Screen connection"
     echo "      1) USB-to-TTL adapter                      (/dev/ttyUSB0)"
     echo "      2) Pi GPIO pins 8 and 10, with resistors   (/dev/ttyAMA0)"
-    echo "    Nextion Intelligent screens (model NX8048P...) send 5 V, so on GPIO"
+    echo "    Nextion Intelligent screens (model numbers with a P) send 5 V, so on GPIO"
     echo "    they need the 1k/2k resistors on the TX wire. See the wiring guide."
     ask "How is the screen connected? 1 or 2" "1"
     if [ "$REPLY" = "2" ]; then
@@ -164,6 +170,7 @@ else
 {
   "node": "$NODE",
   "title": "$TITLE",
+  "screen": "$SCREEN",
   "serial_port": "$PORT",
   "baud": $BAUD,
   "asterisk": "/usr/sbin/asterisk",
@@ -393,7 +400,7 @@ fi
 
 cat <<EOF
 
-  If the screen stays on "Waiting for the node to start..." after the reboot:
+  If the screen stays on "Waiting for the node to start...":
     Check the screen's TX wire goes to the adapter's RXD (or through the 1k
     resistor to pin 10), and its RX wire to the adapter's TXD (or pin 8).
 
