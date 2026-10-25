@@ -100,7 +100,7 @@ Log in to the node with SSH (PuTTY, **port 222**, user **root**). If the HamVOIP
 appears, choose the option to exit to the shell. Then paste this one line:
 
 ```
-curl -sSL https://raw.githubusercontent.com/__GITHUB_REPO__/main/get.sh | bash
+curl -sSL https://raw.githubusercontent.com/WRQC343/NNCP/main/get.sh | bash
 ```
 
 The installer asks a few questions. The value in [brackets] is used if you press Enter.
@@ -128,7 +128,7 @@ reboot, the screen fills in by itself within a minute.
 Run the same line again and choose **1) Update**. Your settings are kept.
 
 ```
-curl -sSL https://raw.githubusercontent.com/__GITHUB_REPO__/main/get.sh | bash
+curl -sSL https://raw.githubusercontent.com/WRQC343/NNCP/main/get.sh | bash
 ```
 
 ## Change your settings
