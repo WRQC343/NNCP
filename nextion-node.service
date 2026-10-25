@@ -1,0 +1,13 @@
+[Unit]
+Description=Nextion touchscreen control panel for AllStar node
+After=asterisk.service
+Wants=asterisk.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env python3 /usr/local/sbin/nextion_node.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
