@@ -1,22 +1,17 @@
 #!/bin/bash
 #
-# install.sh - installer for the GMRS-Link Nextion Node Control Panel
-#              on a HamVOIP / AllStar node (Raspberry Pi)      gmrs-link.com
+# By -- WRQC343 -- www.gmrs-link.com
 #
-#   bash install.sh             install, or reinstall / change settings
-#   bash install.sh uninstall   remove it
-#
-# Usually started by get.sh (the one-line GitHub installer). Run as root.
 
-ROOT="${ROOT:-}"                       # only used for testing
+ROOT="${ROOT:-}"                       
 BIN="$ROOT/usr/local/sbin/nextion_node.py"
 CONF="$ROOT/etc/nextion-node.json"
 UNIT="$ROOT/etc/systemd/system/nextion-node.service"
 BOOTCFG="$ROOT/boot/config.txt"
 CMDLINE="$ROOT/boot/cmdline.txt"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-RECONN_FLAG="/etc/asterisk/local/ReConn/~ReConn_disabled"   # exists = ReConn disabled
-GPS_FLAG="/tmp/GPS.ENABLED"                                  # exists = GPS enabled
+RECONN_FLAG="/etc/asterisk/local/ReConn/~ReConn_disabled"  
+GPS_FLAG="/tmp/GPS.ENABLED"                                 
 NEED_REBOOT=0
 
 say()  { echo -e "\n\033[1;36m==> $*\033[0m"; }
@@ -24,12 +19,10 @@ ok()   { echo -e "    \033[32m$*\033[0m"; }
 warn() { echo -e "    \033[33m$*\033[0m"; }
 die()  { echo -e "\n\033[31mERROR: $*\033[0m\n"; exit 1; }
 
-sc() {   # systemctl, skipped when testing
+sc() { 
     if [ -n "$ROOT" ]; then echo "    (test) systemctl $*"; else systemctl "$@" 2>/dev/null; fi
 }
 
-# Answers come from the keyboard even when this script was started through a
-# pipe (curl ... | bash), where standard input is the script itself.
 IN=/dev/stdin
 if [ ! -t 0 ] && ( : < /dev/tty ) 2>/dev/null; then IN=/dev/tty; fi
 
@@ -78,7 +71,6 @@ ok "Using $PY ($("$PY" --version 2>&1))"
 
 [ -n "$ROOT" ] || command -v asterisk >/dev/null 2>&1 || warn "asterisk command not found - is this an AllStar node?"
 
-# Stop a running copy so it lets go of the serial port while we work
 sc stop nextion-node
 
 # ------------------------------------------------------------------ fresh or keep
