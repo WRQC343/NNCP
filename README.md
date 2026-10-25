@@ -1,6 +1,6 @@
 # GMRS-Link Nextion Node Control Panel
 
-A 5" Nextion touchscreen control panel for HamVOIP / AllStar nodes on a Raspberry Pi.
+A 5" Nextion touchscreen control panel for HamVOIP nodes on a Raspberry Pi.
 Connect and disconnect nodes, send DTMF, watch who's linked, and check your node at a
 glance, without a computer.
 
@@ -166,4 +166,4 @@ journalctl -u nextion-node -f --no-pager
 
 ## Credits
 
-Created by **[gmrs-link.com](https://gmrs-link.com)**. Please keep this credit if you share it.
+Created by **[WRQC343](https://gmrs-link.com)**.
