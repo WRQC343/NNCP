@@ -1,10 +1,10 @@
 ![Logo](https://gmrs-link.com/images/link-scripting_50_1_50.png)   
-![Release Version](https://img.shields.io/badge/Version-v2.9.0-blue?color=blue)
+![Release Version](https://img.shields.io/badge/Version-v3.0.0-blue?color=blue)
 ![OS Version](https://img.shields.io/badge/OS-Linux_*_Hamvoip-red?color=red)
 
 # GMRS-Link - Nextion Node Control Panel
 
-A 5" or 7" Nextion touchscreen control panel for HamVOIP nodes on a Raspberry Pi.
+A 4.3", 5" or 7" Nextion touchscreen control panel for HamVOIP nodes on a Raspberry Pi.
 Connect and disconnect nodes, send DTMF, watch who's linked, and check your node at a
 glance, without a computer.
 
@@ -29,12 +29,13 @@ glance, without a computer.
 | Raspberry Pi running **HamVOIP** | [hamvoip.org](https://hamvoip.org) | Your existing node works |
 | **5" Nextion screen** NX8048P050-011C-Y | [Amazon](https://www.amazon.com/dp/B0B9GZHVT6) | Intelligent, capacitive touch, with enclosure. Comes with the cable that plugs onto the Pi's pins |
 | *or* **7" Nextion screen** NX8048P070-011C-Y | [Amazon](https://www.amazon.com/dp/B0B9GZG4H8) | Same panel, about 1.4x bigger |
+| *or* **4.3" Nextion screen** NX4827P043-011C-Y | [Amazon](https://www.amazon.com/dp/B0B9GWB374) | Smaller 480 x 272 version of the same panel |
 | **USB-to-TTL serial adapter** | [Amazon](https://www.amazon.com/dp/B086ZHGKZT) | Recommended way to connect (option A). If it has a 3.3V/5V jumper, set it to **5V** |
-| **GMRS-Link screen file** (`.tft`) | [gmrs-link.com](https://gmrs-link.com) | One file for the 5", a different one for the 7" |
+| **GMRS-Link screen file** (`.tft`) | [gmrs-link.com](https://gmrs-link.com) | A different file for each screen size: 4.3", 5" or 7" |
 | **microSD card**, 32 GB or smaller | Any store | Only used once, to load the screen file |
 | Two resistors, 1 kΩ and 2 kΩ, and jumper wires | Any electronics store | **Only** for option B (GPIO pins) instead of the USB adapter |
 
-You also need SSH access to the node (PuTTY, port 222) and an internet connection on the node.
+You also need SSH access to the node (MobaXterm, port 222) and an internet connection on the node.
 
 ## 1. Load the screen file
 
@@ -53,7 +54,7 @@ The screen arrives blank. Load the GMRS-Link screen file onto it once:
 Shut down the node and unplug it first.
 
 > **Important:** Nextion **Intelligent** screens (model numbers with a **P**, like
-> NX8048**P**050 and NX8048**P**070) send **5 V** on their TX wire. The Pi's pins only take
+> NX4827**P**043, NX8048**P**050 and NX8048**P**070) send **5 V** on their TX wire. The Pi's pins only take
 > **3.3 V**, so **never connect the yellow TX wire straight to the Pi**. Use option A or B.
 
 ### Option A - USB-to-TTL adapter (recommended, no soldering)
@@ -103,7 +104,7 @@ row along the edge of the board; odd pins (1, 3, 5, 7, 9) are on the inner row.
 
 ### Power
 
-The 5" draws up to about 0.4 A and the 7" up to about 0.5 A. Use a good Pi power supply
+The 4.3" draws about 0.25 A, the 5" up to about 0.4 A and the 7" up to about 0.5 A. Use a good Pi power supply
 (2.5 A or more for a Pi 3, 3 A for a Pi 4), or power the screen from its own 5 V, 1 A
 supply with its ground joined to the Pi's ground.
 
@@ -111,7 +112,7 @@ Power the node back on. The screen shows the GMRS-Link boot screen right away.
 
 ## 3. Install
 
-Log in to the node with SSH (PuTTY, **port 222**, user **root**). If the HamVOIP menu
+Log in to the node with SSH (MobaXterm, **port 222**, user **root**). If the HamVOIP menu
 appears, choose the option to exit to the shell. Then paste this one line:
 
 ```
@@ -124,6 +125,7 @@ The installer asks a few questions. The value in [brackets] is used if you press
 |---|---|
 | Your node number | |
 | Header text, e.g. your call sign | NODE &lt;your node&gt; |
+| Which screen? (1 = 5" or 7", 2 = 4.3") | 1 |
 | How is the screen connected? (1 = USB adapter, 2 = GPIO pins with resistors) | 1 |
 | Minutes before the screen saver (0 = never) | 10 |
 | Turn the screen on when someone keys up? | y (answer n on a busy hub) |
